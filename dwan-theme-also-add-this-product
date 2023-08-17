@@ -1,0 +1,242 @@
+{% if product.metafields.custom.add_to_cart_products != blank %}
+  <div>
+    <h2>Also Add To cart this</h2>
+    <div class="grid grid--2-col-desktop grid--2-col-tablet-down">
+      <div class="grid__item">
+        <!-- product selection -->
+        <form id="cartForm" method="post" action="/cart/add">
+          <div class="grid product-grid grid--3-col-desktop grid--2-col-tablet-down">
+            {% if product.metafields.custom.add_to_cart_products != blank %}
+              {% assign array_of_image_objects = product.metafields.custom.add_to_cart_products.value %}
+              {% if array_of_image_objects %}
+                {% for image_object in array_of_image_objects %}
+                  <div class="grid__item">
+                    <div class="card">
+                      <!-- product image -->
+                      <a href="{{ image_object.url }}"><img width="100%" height="auto" loading="lazy" src="{{ image_object | image_url }}" /></a>
+                      <!-- end product image -->
+                      <!-- product heading -->
+                      <h2 class="card__heading">{{ image_object.title }}</h2>
+                      <!-- end product heading -->
+                      <!-- product Price  -->
+                      {{ image_object.price | money_with_currency }}
+                      <!-- end product Price -->
+                      <!-- variant dropdowan   -->
+                      <select class="select" name="selectedVariant_{{ image_object.variants.first.id }}">
+                        <div class="options">
+                        {% for variant in image_object.variants %}
+                          <option class="item" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+                        {% endfor %}
+                        </div>
+                      </select>
+                      <!-- end variant dropdowan -->
+                      <!-- quantity selector  -->
+                      <quantity-input class="quantity" style="width: 100%; margin: 5px 0 5px 0px;">
+                      <button class="quantity__button no-js-hidden disabled" name="minus" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="icon icon-minus" fill="none" viewBox="0 0 10 2">
+                          <path fill-rule="evenodd" clip-rule="evenodd" d="M.5 1C.5.7.7.5 1 .5h8a.5.5 0 110 1H1A.5.5 0 01.5 1z" fill="currentColor">
+                        </path></svg>
+                      </button>
+                      <input type="number" class="quantity__input" min="1" max="10" name="quantity_{{ image_object.variants.first.id }}" value="1">
+                      <button class="quantity__button no-js-hidden" name="plus" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="icon icon-plus" fill="none" viewBox="0 0 10 10">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M1 4.51a.5.5 0 000 1h3.5l.01 3.5a.5.5 0 001-.01V5.5l3.5-.01a.5.5 0 00-.01-1H5.5L5.49.99a.5.5 0 00-1 .01v3.5l-3.5.01H1z" fill="currentColor">
+                      </path></svg>
+                      </button>
+                    </quantity-input>
+                      <!-- <input type="number" class="quantity__input" min="1" max="10" name="quantity_{{ image_object.variants.first.id }}" value="1"> -->
+                      <!-- end quantity selector -->
+                      <!--checkbox  -->
+                      <input type="checkbox" name="selectedItems[]" value="{{ image_object.variants.first.id }}" data-selected-items="{{ image_object.id }}">
+                      <!-- endcheckbox -->
+                    </div>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endif %}
+          </div>
+          <!-- add to cart button -->
+          <button type="button" onclick="addToCart()" class="product-form__submit button button--full-width button--secondary" id="addToCartButton">Add to Cart</button>
+          <!-- end add to cart button  -->
+        </form>
+        <!-- end product selection -->
+      </div>
+    </div>
+  </div>
+  <style>
+    *{
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  *:focus{
+      outline: none;
+      box-shadow: none;
+  }
+
+  .select{
+      height: 40px;
+      color: #292929;
+      background: #fff;
+      text-align: left;
+      padding: 0 15px;
+      font-size: 16px;
+      cursor: pointer;
+  }
+
+  .select::after{
+      content: '';
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%) rotate(45deg);
+      width: 6px;
+      height: 6px;
+      border-right: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+  }
+
+  .select:hover{
+      background: #222222;
+        color: #fff;
+  }
+
+  .select.active{
+      background: #222222;
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+  }
+
+  .options{
+      position: absolute;
+      top: 40px;
+      left: 0;
+      width: 100%;
+      height: fit-content;
+      background: rgba(0, 0, 0, 0.5);
+      border-bottom-left-radius: 10px;
+      border-bottom-right-radius: 10px;
+      overflow: hidden;
+      display: none;
+  }
+
+  .options.active{
+      display: block;
+  }
+
+  .options .item{
+      color: #fff;
+      text-transform: capitalize;
+      width: 100%;
+      height: 30px;
+      padding: 0 15px;
+      line-height: 30px;
+      cursor: pointer;
+  }
+
+  .options .item.active{
+      background: #292929;
+  }
+    input[type=checkbox] {
+    position: relative;
+    border: 2px solid #000;
+    border-radius: 2px;
+    background: none;
+    cursor: pointer;
+    line-height: 0;
+    margin: 0 .6em 0 0;
+    outline: 0;
+    padding: 0 !important;
+    vertical-align: text-top;
+    height: 40px;
+    width: 100%;
+    -webkit-appearance: none;
+    opacity: .5;
+  }
+
+  input[type=checkbox]:hover {
+    opacity: 1;
+  }
+
+  input[type=checkbox]:checked {
+    background-color: #000;
+    opacity: 1;
+  }
+
+  input[type=checkbox]:before {
+    content: '';
+    position: absolute;
+    right: 50%;
+    top: 50%;
+    width: 4px;
+    height: 10px;
+    border: solid #FFF;
+    border-width: 0 2px 2px 0;
+    margin: -1px -1px 0 -1px;
+    transform: rotate(45deg) translate(-50%, -50%);
+    z-index: 2;
+  }
+  </style>
+
+  <script>
+    function updateAddToCartButton() {
+      const form = document.getElementById('cartForm');
+      const selectedItems = [];
+      const addToCartButton = document.getElementById('addToCartButton');
+
+      for (let i = 0; i < form.elements.length; i++) {
+        const element = form.elements[i];
+        if (element.type === 'checkbox' && element.checked) {
+          const variantId = form.elements['selectedVariant_' + element.value].value;
+          const quantity = parseInt(form.elements['quantity_' + element.value].value, 10) || 1;
+          selectedItems.push({ id: variantId, quantity: quantity });
+        }
+      }
+
+      if (selectedItems.length > 0) {
+        addToCartButton.innerText = 'Add ' + selectedItems.length + ' Item(s) to Cart';
+      } else {
+        addToCartButton.innerText = 'Add to Cart';
+      }
+    }
+
+    const form = document.getElementById('cartForm');
+    form.addEventListener('change', updateAddToCartButton);
+
+    function addToCart() {
+      const form = document.getElementById('cartForm');
+      const selectedItems = [];
+
+      for (let i = 0; i < form.elements.length; i++) {
+        const element = form.elements[i];
+        if (element.type === 'checkbox' && element.checked) {
+          const variantId = form.elements['selectedVariant_' + element.value].value;
+          const quantity = parseInt(form.elements['quantity_' + element.value].value, 10) || 1;
+          selectedItems.push({ id: variantId, quantity: quantity });
+        }
+      }
+
+      if (selectedItems.length > 0) {
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            items: selectedItems,
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          window.location.href = '/cart'; // Redirect to the checkout page after adding items
+        })
+        .catch(error => {
+          console.log('Failed to add items to the cart. Please try again.');
+        });
+      } else {
+        console.log('Please select at least one item before adding to the cart.');
+      }
+    }
+  </script>
+{% endif %}
