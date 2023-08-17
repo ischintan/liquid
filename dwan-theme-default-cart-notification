@@ -1,0 +1,310 @@
+{% if product.metafields.custom.add_to_cart_products != blank %}
+<div>
+  <div>
+    <h2 class="also_add">Also Add To Cart This</h2>
+  </div>
+  <div>
+    <div class="">
+      <!-- product selection -->
+      <form id="cartForm" method="post" action="/cart/add">
+        <div class="grid product-grid grid--3-col-desktop grid--2-col-tablet-down">
+          {% if product.metafields.custom.add_to_cart_products != blank %}
+            {% assign array_of_image_objects = product.metafields.custom.add_to_cart_products.value %}
+            {% if array_of_image_objects %}
+              {% for image_object in array_of_image_objects %}
+                <div class="grid__item">
+                  <div class="card">
+                    <!-- product image -->
+                    <a href="{{ image_object.url }}"><img width="100%" height="auto" loading="lazy" src="{{ image_object | image_url }}" /></a>
+                    <!-- end product image -->
+                    <!-- product heading -->
+                    <h2 class="card__heading">{{ image_object.title }}</h2>
+                    <!-- end product heading -->
+                    <!-- product Price  -->
+                    {{ image_object.price | money_with_currency }}
+                    <!-- end product Price -->
+                    <!-- variant dropdowan   -->
+                    <select class="select" name="selectedVariant_{{ image_object.variants.first.id }}">
+                      <div class="options">
+                      {% for variant in image_object.variants %}
+                        <option class="item" value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money_with_currency }}</option>
+                      {% endfor %}
+                      </div>
+                    </select>
+                    <!-- end variant dropdowan -->
+                    <!-- quantity selector  -->
+                    <quantity-input class="quantity" style="width: 100%; margin: 5px 0 5px 0px;">
+                    <button class="quantity__button no-js-hidden disabled" name="minus" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="icon icon-minus" fill="none" viewBox="0 0 10 2">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M.5 1C.5.7.7.5 1 .5h8a.5.5 0 110 1H1A.5.5 0 01.5 1z" fill="currentColor">
+                      </path></svg>
+                    </button>
+                    <input type="number" class="quantity__input" min="1" max="10" name="quantity_{{ image_object.variants.first.id }}" value="1">
+                    <button class="quantity__button no-js-hidden" name="plus" type="button">
+                      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" class="icon icon-plus" fill="none" viewBox="0 0 10 10">
+                      <path fill-rule="evenodd" clip-rule="evenodd" d="M1 4.51a.5.5 0 000 1h3.5l.01 3.5a.5.5 0 001-.01V5.5l3.5-.01a.5.5 0 00-.01-1H5.5L5.49.99a.5.5 0 00-1 .01v3.5l-3.5.01H1z" fill="currentColor">
+                    </path></svg>
+                    </button>
+                  </quantity-input>
+                    <!-- <input type="number" class="quantity__input" min="1" max="10" name="quantity_{{ image_object.variants.first.id }}" value="1"> -->
+                    <!-- end quantity selector -->
+                    <!--checkbox  -->
+                    <div class="cat crime" id="checkboxContainer">
+                      <label>
+                          <input type="checkbox" name="selectedItems[]" value="{{ image_object.variants.first.id }}" data-selected-items="{{ image_object.id }}">
+                           <span class="checkbox-text">Select me</span>
+                      </label>
+                  </div>
+                    <!-- endcheckbox -->
+                  </div>
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endif %}
+        </div>
+        <div class="product-form__buttons">
+          <button id="addToCartButton" type="submit" name="add" class="product-form__submit button button--full-width button--secondary">
+            <span>Add to cart</span>
+            <div class="loading-overlay__spinner hidden">
+              <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+              </svg>
+            </div>
+          </button>
+        </div>
+        <!-- add to cart button -->
+         <!-- <button type="submit" class="product-form__submit button  button--secondary" id="addToCartButton">Add to Cart</button> -->
+        <!-- end add to cart button  -->
+      </form>
+      <!-- end product selection -->
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const checkboxes = document.querySelectorAll(".cat.crime input[type='checkbox']");
+    checkboxes.forEach(function (checkbox) {
+        const checkboxText = checkbox.parentElement.querySelector(".checkbox-text");
+
+        checkbox.addEventListener("change", function () {
+            if (checkbox.checked) {
+                checkboxText.textContent = "Selected";
+            } else {
+                checkboxText.textContent = "Select me";
+            }
+        });
+    });
+
+    const form = document.getElementById('cartForm');
+    form.addEventListener('submit', function (event) {
+        event.preventDefault(); // Prevent default form submission
+
+        const selectedItems = [];
+        for (let i = 0; i < form.elements.length; i++) {
+            const element = form.elements[i];
+            if (element.type === 'checkbox' && element.checked) {
+              const variantId = form.elements['selectedVariant_' + element.value].value;
+              const variantName = form.elements['selectedVariant_' + element.value].options[form.elements['selectedVariant_' + element.value].selectedIndex].text;
+              const productImage = form.elements['selectedVariant_' + element.value].parentNode.querySelector('img').getAttribute('src');
+              const quantity = parseInt(form.elements['quantity_' + element.value].value, 10) || 1;
+               const productTitle = element.closest('.card').querySelector('.card__heading').textContent;
+              selectedItems.push({ id: variantId, name: variantName, image: productImage, quantity: quantity, title: productTitle });
+            }
+        }
+
+        const cartNotification = document.getElementById('cart-notification');
+        if (selectedItems.length > 0) {
+            cartNotification.classList.add('active', 'anime');
+        } else {
+            cartNotification.classList.remove('active', 'anime');
+
+            // Find and remove the addedItemsList container
+            const addedItemsList = document.getElementById('cart-notification-added-items');
+            if (addedItemsList) {
+                addedItemsList.parentNode.removeChild(addedItemsList);
+            }
+        }
+
+        if (selectedItems.length > 0) {
+            fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    items: selectedItems,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                const addedItemsList = document.createElement('div'); // Create a new container
+                addedItemsList.id = 'cart-notification-added-items'; // Set a new id for the container
+
+                selectedItems.forEach(item => {
+                    const existingItem = addedItemsList.querySelector(`[data-product-id="${item.id}"]`);
+                    if (existingItem) {
+                        // Update the quantity of the existing item
+                        const existingQuantity = parseInt(existingItem.querySelector('.cart-notification-product__quantity').textContent, 10);
+                        existingItem.querySelector('.cart-notification-product__quantity').textContent = existingQuantity + item.quantity;
+                    } else {
+                        // Create a new item element
+                        const listItem = document.createElement('div');
+                        listItem.className = 'cart-notification-product';
+                        listItem.setAttribute('data-product-id', item.id);
+                        listItem.innerHTML = `
+                            <div class="cart-notification-product custom-cart">
+                                <div class="cart-notification-product__image global-media-settings">
+                                    <img src="${item.image}" alt="${item.name}" width="70" height="70" loading="lazy">
+                                </div>
+                                <div>
+                                    <h3 class="cart-notification-product__name h4">${item.title}</h3>
+                                    <h3 class="cart-notification-product__name h4">${item.name}</h3>
+                                    <dl>
+                                        <div class="product-option">
+                                            <dt>Quantity:</dt>
+                                            <dd class="cart-notification-product__quantity">${item.quantity}</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </div>
+                        `;
+
+                        addedItemsList.appendChild(listItem);
+                    }
+                });
+
+                // Find the element with id "cart-notification-product"
+                const cartNotificationProduct = document.getElementById('cart-notification-product');
+
+                // Insert the addedItemsList after the cartNotificationProduct
+                cartNotificationProduct.insertAdjacentElement('afterend', addedItemsList);
+            })
+            .catch(error => {
+                console.log('Failed to add items to the cart. Please try again.');
+            });
+        } else {
+            console.log('Please select at least one item before adding to the cart.');
+        }
+    });
+
+    // Add click event listener to document to remove classes and container on click outside
+    document.addEventListener('click', function (event) {
+        const cartNotification = document.getElementById('cart-notification');
+        if (!cartNotification.contains(event.target)) {
+            cartNotification.classList.remove('active', 'anime');
+
+            // Find and remove the addedItemsList container
+            const addedItemsList = document.getElementById('cart-notification-added-items');
+            if (addedItemsList) {
+                addedItemsList.parentNode.removeChild(addedItemsList);
+            }
+        }
+    });
+});
+
+
+</script>
+<style>
+  *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+*:focus{
+    outline: none;
+    box-shadow: none;
+}
+.also_add{
+    background: black;
+    color: white;
+    padding: 15px;
+    margin: 10px 0;
+  }
+.select{
+    height: 40px;
+    color: #292929;
+    background: #fff;
+    text-align: left;
+    padding: 0 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.select::after{
+    content: '';
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 6px;
+    height: 6px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+}
+
+.select:hover{
+    background: #222222;
+      color: #fff;
+}
+
+.select.active{
+    background: #222222;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.options{
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 100%;
+    height: fit-content;
+    background: rgba(0, 0, 0, 0.5);
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    overflow: hidden;
+    display: none;
+}
+
+.options.active{
+    display: block;
+}
+
+.options .item{
+    color: #fff;
+    text-transform: capitalize;
+    width: 100%;
+    height: 30px;
+    padding: 0 15px;
+    line-height: 30px;
+    cursor: pointer;
+}
+
+.options .item.active{
+    background: #292929;
+}
+.cat.crime{
+    border: 1px solid #000;
+}
+.cat label span {
+  text-align: center;
+  padding: 3px 0;
+  display: block;
+}
+.cat label input {
+    display: none;
+}
+.cat label input + span{
+  color: #000;
+}
+.cat input:checked + span {
+    color: #ffffff;
+}
+.crime input:checked + span{
+  background-color: #000;
+}
+</style>
+
+{% endif %}
