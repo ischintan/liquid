@@ -1,0 +1,124 @@
+<div class="accordion-list border-bottom">
+  
+    <button class="accordion border-top">DETAILS</button>
+      <div class="panel panel-1" >
+        <p><div class="description">{{ product.description }}</div></p>
+        <a class="read-more-link" href="#" onclick="toggleDescription()">read more</a>
+      </div>
+
+
+  <button class="accordion border-top">Reviews</button>
+  <div class="panel">
+    <p><div id="looxReviews" data-product-id="{{product.id}}" class="loox-reviews-default">{{ product.metafields.loox.reviews }}</div></p>
+  </div>
+
+  <button class="accordion border-top">Instructions</button>
+  <div class="panel">
+    <p>{{ product.metafields.custom.instruction | metafield_text }}</p>
+  </div>
+
+  <button class="accordion border-top">Ingredients</button>
+  <div class="panel">
+    <p>{{ product.metafields.custom.ingredients | metafield_text }}</p>
+  </div>
+
+  <button class="accordion border-top">Shipping & Returns</button>
+  <div class="panel">
+    <p>{{ product.metafields.custom.shipping_returns | metafield_text }}</p>
+  </div>
+
+  <button class="accordion border-top">FAQ’s</button>
+  <div class="panel">
+    {{ product.metafields.custom.faqs | metafield_text }}
+  </div>
+</div>
+<script>
+    function toggleDescription() {
+    var description = document.querySelector('.description');
+    var panel = document.querySelector('.panel');
+    var readMoreLink = document.querySelector('.read-more-link');
+
+    if (description.classList.contains('expanded')) {
+      description.classList.remove('expanded');
+      readMoreLink.textContent = 'Read more';
+      panel.style.maxHeight = '250px'; // Reset the max-height of the panel
+    } else {
+      description.classList.add('expanded');
+      readMoreLink.textContent = 'Read less';
+      panel.style.maxHeight = panel.scrollHeight + 'px'; // Set max-height to match content height
+    }
+  }
+
+  var acc = document.getElementsByClassName("accordion");
+  var i;
+
+  for (i = 0; i < acc.length; i++) {
+    acc[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var panel = this.nextElementSibling;
+      if (panel.style.maxHeight) {
+        panel.style.maxHeight = null;
+      } else {
+        panel.style.maxHeight = panel.scrollHeight + "px";
+      }
+    });
+  }
+</script>
+<style>
+/* accordion */
+.accordion {
+  background-color: #fff;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+.active, .accordion:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+
+.accordion:after {
+  content: '\002B';
+  color: #777;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+}
+
+.panel {
+  padding: 0 18px;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+
+.accordion.border-top{
+  border-top: 1px solid;
+}
+
+.accordion-list.border-bottom{
+   border-bottom: 1px solid;
+}
+ .description {
+    max-height: 150px;
+    overflow: hidden;
+  }
+
+  .expanded {
+    max-height: none;
+  }
+
+</style>
