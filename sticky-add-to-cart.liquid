@@ -202,6 +202,56 @@
     </div>
   </div>
  </div> 
+
+<script>
+// sticky-wrap add-to-cart button
+
+$('.ad-to-cart-btn').click(function(e){  
+  e.preventDefault();
+  $(this).addClass('btn--loading');
+  var ID = $(this).attr("data-id");
+  addItemToCart( ID, 1);    // paste your id product number
+  
+});
+function addItemToCart(variant_id, qty) {
+  data = {
+    "id": variant_id,
+    "quantity": qty
+  }
+  jQuery.ajax({
+    type: 'POST',
+    url: '/cart/add.js',
+    data: data,
+    dataType: 'json',
+    success: function(data) { 
+      document.dispatchEvent(new CustomEvent('cart:build'));
+      (new theme.CartDrawer()).open();
+      $('.ad-to-cart-btn').removeClass('btn--loading');
+    },
+      error: function (data) {
+        alert(data.responseJSON["description"]);
+        $(".ad-to-cart-btn").removeClass("btn--loading");
+      },
+   
+  }); 
+ 
+}
+
+$(window).scroll(function() {
+  if ( $(window).scrollTop() >= 1200 ) {
+      $('.sticky-wrap-sec').addClass('show');
+  } else {
+      $('.sticky-wrap-sec').removeClass('show');
+  }
+});
+
+
+setTimeout(function(){ 
+$('.timesact-button-bis').css({"text-transform":"uppercase","border":"0px"});
+}, 2000);
+// end sticky add-to-cart
+</script>
+
 <style>
 .product-single__form .add-to-cart {
     display: flex;
