@@ -1,0 +1,304 @@
+<script>
+  $(function() {
+    var title = $(".dititle");
+    title
+      .on("click", function() {
+        var ThisIt = $(this);
+        $(".dititle").not(ThisIt).removeClass("active");
+        $(this).toggleClass("active");
+        $(".ditext").not(ThisIt.next(".ditext")).slideUp(400);
+        ThisIt.next(".ditext").slideToggle(400);
+       
+      })
+      .eq(0)
+      .click();
+  });
+$('.readmore').click(function (event) {
+  event.preventDefault();
+  var descriptionFull = document.querySelector('.product-description-full');
+  descriptionFull.style.display = 'block';
+  var descriptionShort = document.querySelector('.product-description-short');
+  descriptionShort.style.display = 'none';
+});
+$('.readless').click(function (event) {
+  event.preventDefault();
+  var descriptionFull = document.querySelector('.product-description-full');
+  descriptionFull.style.display = 'none';
+  var descriptionShort = document.querySelector('.product-description-short');
+  descriptionShort.style.display = 'block';
+});  
+</script>
+{%- when 'details' -%}  
+<div class="diitem">
+  <div class="accordin-border-bottom des-border-top" style="font-weight:500;">
+    <button type="button"
+      class="label dititle"
+      {% if force_open %}aria-expanded="true"{% endif %}>
+      {{ block.settings.des_title }}  
+   <div class="icon-set"></div>
+    </button>
+    <div id="Product-content-{{ id }}"
+      class="ditext "
+      {% if force_open %}style="height: auto;"{% endif %}>
+      <div class="">
+                   
+                  {%- if product.description != blank -%}
+                    <div class="ProductMeta__Description" {{ block.shopify_attributes }}>
+                    <div class="product-description-short">
+                      <div class="">
+                      <div class="Rte">
+                    {% assign my_description1 = product.description | split: '<!--split1-->'  %}
+                       {{- my_description1[1] -}}
+                    <br>
+                      </div></div>
+                     <br>
+                      <div class="Rte">
+            <a class="readmore" href="#" style="display:block;color:#000;text-decoration: revert;">Read more</a>
+          </div>
+                    
+                    </div>
+                    </div>
+      </strong>
+                 <div class="product-description-full" style="display:none;">
+                    {% assign my_description = product.description | split: '<!-- split -->'  %}
+                            {{ my_description[1] }}
+                        <br><a class="readless" href="#" style="display:block;color:#000;text-decoration: revert;">Read less</a>
+                     </div> 
+                    
+                    </div>
+                  {%- endif -%}
+
+      </div>
+    </div>
+  </div>           
+
+{% when 'shipping_information' %}
+<div class="accordin-border-bottom freeshippingdata">           
+<button type="button"
+      class="label dititle"
+      {% if force_open %}aria-expanded="true"{% endif %}>
+      {{ block.settings.shipping_title }}
+   <div class="icon-set"></div>
+</button>              
+
+<div id="Product-content-{{ id }}" class="ditext " {% if force_open %}style="height: auto;"{% endif %}>
+      <div class="">
+ {{ block.settings.free_des }}
+      </div>
+</div>     
+</div>  
+                
+
+{% when 'faq' %}
+<div class="accordin-border-bottom faqdata">           
+<button type="button"
+      class="label dititle"
+      {% if force_open %}aria-expanded="true"{% endif %}>
+        {{ block.settings.faq_title }}
+   <div class="icon-set"></div>
+</button>              
+
+<div id="Product-content-{{ id }}" class="ditext " {% if force_open %}style="height: auto;"{% endif %}>
+      <div class="">
+        {{ block.settings.faq_des }}
+      </div>
+</div>     
+</div>   
+                
+          
+</div>  
+/* accordion  */
+   .tabs {
+	 border-radius: 8px;
+	 overflow: hidden;
+/* 	 box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.5); */
+}
+ .tab {
+	 width: 100%;
+	 color: white;
+	 overflow: hidden;
+}
+ .tab-label {
+	 display: flex;
+	 justify-content: space-between;
+	 padding: 1em;
+	 background: #2c3e50;
+	 font-weight: bold;
+	 cursor: pointer;
+     padding-right: 20px;
+	/* Icon */
+}
+ .tab-label:hover {
+	 background: #1a252f;
+}
+ .tab-label::after {
+	 content: "\276F";
+	 width: 1em;
+	 height: 1.5em;
+	 text-align: center;
+	 transition: all 0.35s;
+     transform: rotate(-90deg);
+}
+ .tab-content {
+	 max-height: 0;
+	 padding: 0 1em;
+	 color: #2c3e50;
+	 background: white;
+	 transition: all 0.35s;
+}
+ .tab-close {
+	 display: flex;
+	 justify-content: flex-end;
+	 padding: 1em;
+	 font-size: 0.75em;
+	 background: #2c3e50;
+	 cursor: pointer;
+}
+ .tab-close:hover {
+	 background: #1a252f;
+}
+ input:checked + .tab-label {
+	 background: #1a252f;
+}
+ input:checked + .tab-label::after {
+	 transform: rotate(90deg);
+}
+ input:checked ~ .tab-content {
+	 max-height: 100%;
+	 padding: 0px;
+}
+.input-hidden{
+  display:none;
+} 
+/*accordion-2  */
+ .accordin-border-bottom{
+    border-bottom: 1px solid #e8e8e1;
+  }
+  
+      
+  .icon--minus {
+      display: none;
+  }
+  .active .icon--minus {
+      display: inline-block;
+  }
+  .label.dititle{
+     border-bottom: 0px;
+      text-align: left;
+      border: none;
+      border-bottom: 1px solid #CFCFCF;
+      font-size: 16px;
+      line-height: 19px;
+      letter-spacing: -.01em;
+      text-transform: uppercase;
+      padding-left: 0;
+      text-align: center;
+      color: inherit;
+      position: relative;
+      border-color: #e8e8e1;
+      border-bottom: 0;
+      padding: 12px;
+      text-transform: uppercase;
+      display: block;
+      width: 100%;
+      padding: 15px 10px 15px 0;
+     text-transform: uppercase;
+      text-align: left;
+      cursor: pointer;
+  }
+  
+  .dititle .icon-set{
+        width: 12px;
+      height: 12px;
+    right: 0;
+        display: block;
+      position: absolute;
+   
+      top: 50%;
+      font-size: 16px;
+      line-height: 19px;
+      letter-spacing: -.01em;
+      text-transform: uppercase;
+      transform: translateY(-50%);
+  }
+  
+  .dititle .icon-set:before{
+    content: '';
+    display: table;
+    width: 11px;
+    position: absolute;
+    height: 11px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;  
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='11' viewBox='0 0 12 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.5001 11V6H0.5L0.500098 5H5.5001V0L6.5001 2.37562e-05V5H11.5001V6H6.5001V11H5.5001Z' fill='black'/%3E%3C/svg%3E");
+  }
+  .dititle.active .icon-set:before{
+     content: '';
+    display: table;
+    width: 11px;
+    position: absolute;
+    height: 2px;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    margin: auto;  
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='1' viewBox='0 0 12 1' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5.66667 1H0V2.26276e-05H5.66667L6.33333 0L12 2.26276e-05V1H6.33333H5.66667Z' fill='black'/%3E%3C/svg%3E"); 
+  }
+  
+  .active .icon--plus {
+      display: none;
+  }
+  .dititle {
+    position: relative;
+    padding: 10px;
+    cursor: pointer;
+    display: block;
+  }
+  
+  .ditext {
+    padding: 12px;
+    display: none;
+  }
+
+.des-border-top{
+  border-top:1px solid #dfdfdf;
+  margin-top:40px;
+  font-weight:700;
+}
+.freeshippingdata .ditext{
+  padding:0px;
+  font-weight:400;
+  padding-bottom:10px;
+}
+.faqdata .ditext{
+    padding:0px;
+  font-weight:400;
+  padding-bottom:10px;
+}
+
+.reviewdata .jdgm-rev__body{
+  font-weight: 400 !important;
+}
+span.ProductItem__Label.ProductItem__Label--onSale.Heading.Text--subdued.data{
+      background-color: #202020;
+    color: #fff;
+    border-radius: 6px;
+}
+.ProductItem__Label--soldOut{
+   border-radius: 6px;
+}
+.mess-data{
+  padding-left:5px;
+}
+body{
+  overflow-x: hidden;
+}
+.bottom_btn{
+  z-index:0;
+}  
+.diitem{
+  margin-top: 24px;
+}
+</style>  
