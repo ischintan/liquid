@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <style>
+    .area {
+      width: 100%;
+      height: 500px;
+      border: 1px solid #19627F;
+      position: relative;
+      margin: 0 auto;
+      background: url(https://visualhunt.com/photos/m/1/bee-insect-nature.jpg) center center;
+      background-size: cover;
+    }
+
+    .move-rect {
+      display: block;
+      background: #fff;
+      position: relative;
+      opacity: 0.7;
+      max-width: 600px;
+      padding: 10px 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      left: 50%;
+      transform: translateX(-50%);
+
+      h2 {
+        margin: 0;
+        font-size: 3em;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="area">
+    <div class="move-rect">
+      <h2>Lorem ipsum dolor sit amet</h2>
+    </div>
+  </div>
+  <script>
+    $(document).ready(function () {
+      var $moveable = $('.move-rect');
+      var rectPosY = parseInt($('.move-rect').css('top'), 10);
+      var rectPosX = parseInt($('.move-rect').css('left'), 10);
+      $(".area").mousemove(function (e) {
+        $moveable.css({ 'top': rectPosY - e.pageY / 40, 'left': rectPosX - e.pageX / 40 });
+      });
+    });
+  </script>
+</body>
+
+</html>
