@@ -1,0 +1,76 @@
+        {%- for block in section.blocks -%}
+          {%- if block.type == 'announcement' -%}
+  <span class="announcement_bar-inner">
+
+    <span class="marquee--inner">
+ 
+      <span class="marquee">
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        </span>
+    <span class="marquee">
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+        <span class="mspan announcement-text"><a href="{{ block.settings.link }}">{{ block.settings.text }}</a>{% if block.settings.btn_label !=blank %}<span class="announcement-btn-wrap"><a class="btn" href="{{ block.settings.link }}">{{ block.settings.btn_label | escape }}</a></span>{% endif %}</span>
+      </span>
+    </span>
+</span>
+      {% endif %}
+{% endfor %}
+<style>
+.announcement-bar {
+  height: 40px;
+  width: 100%;
+}
+.announcement_bar-inner {
+  overflow: hidden;
+}
+.announcement-text{
+  display: flex;
+  align-items:center;
+}
+.announcement-bar{
+  display: flex;
+  align-items:center;
+    overflow: hidden;
+}
+.marquee--inner {
+  display: flex;
+  gap: 40px;
+}
+
+.marquee {
+  display: flex;
+  gap: 40px;
+  min-width: 100vw;
+  flex-shrink: 0;
+  padding-right: 0;
+  justify-content: space-evenly;
+  animation: loop 40s infinite linear;
+  animation-name: loop;
+  animation-duration: 40s;
+  animation-timing-function: linear;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-fill-mode: none;
+  animation-play-state: running;
+  animation-timeline: ;
+}
+
+@keyframes loop {
+  0% {
+    transform: translate(0%);
+  } 
+  100% {
+    transform: translate(-100%);
+  }
+}
+</style>
+    </div>
+  </div>
